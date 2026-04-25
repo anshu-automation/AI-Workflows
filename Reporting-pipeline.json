@@ -1,0 +1,284 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            },
+            {
+              "daysInterval": 2,
+              "triggerAtHour": 17
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "57bc6259-4fe8-48ea-bbc7-bf4df5416c61",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1f2NhIpiqyRvxBhMWY0TS_JPjNB_mV5mteTQpu9YXjOc",
+          "mode": "list",
+          "cachedResultName": "Onboarding",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f2NhIpiqyRvxBhMWY0TS_JPjNB_mV5mteTQpu9YXjOc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "onboarding",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1f2NhIpiqyRvxBhMWY0TS_JPjNB_mV5mteTQpu9YXjOc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "7bc8b98b-9f5a-4951-9993-82380b461a73",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "58Ml6XYsebkzpDFv",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "72ebc406-e713-418c-bafe-2e7696915403",
+              "name": "Employee_ID",
+              "value": "={{$json[\"Employee_ID\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "37b7df60-6575-4991-aaaa-87aadc85aab7",
+              "name": "Name",
+              "value": "={{$json[\"Name\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "6e0d7acb-c280-489d-af1a-7d0e98649739",
+              "name": "DOJ",
+              "value": "={{$json[\"DOJ\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "43e8c811-8108-4ccd-81bb-70478bd558a5",
+              "name": "Onboarding_Status",
+              "value": "={{$json[\"Onboarding_Status\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "5085b063-5e74-47c9-9a22-fdbcdcbd8ed5",
+              "name": "Grievance",
+              "value": "={{$json[\"Grievance\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "7c83a1a9-6ea6-4c45-b3cb-66ac0f6edf07",
+              "name": "Issue_Status",
+              "value": "={{$json[\"Issue_Status\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "4ec7646d-bb87-4c30-aaa6-468fce285e8c",
+              "name": "Status",
+              "value": "={{$json[\"Status\"]}}",
+              "type": "string"
+            },
+            {
+              "id": "e34161a9-aa31-4da8-84e4-88ec55f197d0",
+              "name": "Department",
+              "value": "={{$json[\"Department\"]}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "ad41d23a-eb78-4a66-baa7-107aa2f18cc0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "c79de1b8-efca-4896-9452-42c46a22f4ef",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "sendTo": "asmarasheid@gmail.com,anshu.amy@gmail.com, ashucent94@gmail.com, anshu310387@gmail.com",
+        "subject": "🚀 HR Daily Dashboard — Daily Report",
+        "message": "={{ $json.htmlEmail }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1344,
+        0
+      ],
+      "id": "f692921b-9133-4eb4-98e9-c9a27381ec71",
+      "name": "Send a message",
+      "webhookId": "bff24ed0-bea2-4f59-bf87-232b175ec38a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BqixGZL4Z9FwoVX3",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_GROQ_API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"llama-3.3-70b-versatile\",\n  \"max_tokens\": 500,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $json.body }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        896,
+        0
+      ],
+      "id": "8ff02d52-360d-492d-8ca2-05a51972aeb0",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const employees = $('Aggregate').item.json.data;\n\n// ===== ONBOARDING =====\nconst total = employees.length;\nconst active = employees.filter(e => e['Status'] === 'Active').length;\nconst inProgress = employees.filter(e => e['Onboarding_Status'] === 'In Progress').length;\nconst completed = employees.filter(e => e['Onboarding_Status'] === 'Completed').length;\nconst pending = employees.filter(e => e['Onboarding_Status'] === 'Pending').length;\n\n// ===== GRIEVANCE =====\nconst grievanceYes = employees.filter(e => e['Grievance'] === 'Yes').length;\nconst grievanceNo = employees.filter(e => e['Grievance'] === 'No').length;\nconst openIssues = employees.filter(e => e['Issue_Status'] === 'Open').length;\nconst closedIssues = employees.filter(e => e['Issue_Status'] === 'Closed').length;\n\n// ===== PRIORITY =====\nconst highP = employees.filter(e => (e['Priority']||'').toLowerCase() === 'high').length;\nconst mediumP = employees.filter(e => (e['Priority']||'').toLowerCase() === 'medium').length;\nconst lowP = employees.filter(e => (e['Priority']||'').toLowerCase() === 'low').length;\n\n// ===== ISSUE TYPE WISE =====\nconst issueMap = {};\nemployees.forEach(e => {\n  const type = e['Issue_Type'] || 'NA';\n  if (type === 'NA' || !e['Grievance'] || e['Grievance'] !== 'Yes') return;\n  if (!issueMap[type]) issueMap[type] = { high: 0, medium: 0, low: 0, total: 0 };\n  issueMap[type].total++;\n  const p = (e['Priority']||'').toLowerCase();\n  if (p === 'high') issueMap[type].high++;\n  else if (p === 'medium') issueMap[type].medium++;\n  else if (p === 'low') issueMap[type].low++;\n});\n\n// ===== DEPT WISE =====\nconst deptMap = {};\nemployees.forEach(e => {\n  const dept = e['Department'] || 'Unknown';\n  if (!deptMap[dept]) deptMap[dept] = { total: 0, active: 0, inProgress: 0, completed: 0, pending: 0, grievance: 0, open: 0 };\n  deptMap[dept].total++;\n  if (e['Status'] === 'Active') deptMap[dept].active++;\n  if (e['Onboarding_Status'] === 'In Progress') deptMap[dept].inProgress++;\n  if (e['Onboarding_Status'] === 'Completed') deptMap[dept].completed++;\n  if (e['Onboarding_Status'] === 'Pending') deptMap[dept].pending++;\n  if (e['Grievance'] === 'Yes') deptMap[dept].grievance++;\n  if (e['Issue_Status'] === 'Open') deptMap[dept].open++;\n});\n\nconst sheetId = '17D65gxcTNocEAt-tlFxH8jZZg2hBF9irNt83Xmgb5BA';\nconst dashboardLink = `https://docs.google.com/spreadsheets/d/${sheetId}`;\n\n// ===== HELPERS =====\nconst maxOnboard = Math.max(active, inProgress, completed, pending, 1);\nconst maxGriev = Math.max(grievanceYes, grievanceNo, openIssues, closedIssues, 1);\n\nconst bar = (val, color, label, maxV) => `\n  <div style=\"margin:10px 0;\">\n    <div style=\"display:flex;align-items:center;gap:10px;\">\n      <div style=\"width:110px;font-size:12px;color:#94a3b8;\">${label}</div>\n      <div style=\"background:${color};height:26px;width:${Math.round((val/maxV)*240)}px;\n                  border-radius:6px;min-width:28px;\"></div>\n      <div style=\"font-weight:bold;color:white;font-size:15px;\">${val}</div>\n    </div>\n  </div>`;\n\nconst pct = (v, tot) => Math.round((v / Math.max(tot, 1)) * 100);\n\n// ===== GRIEVANCE TABLE ROWS =====\nconst issueRows = Object.entries(issueMap)\n  .sort((a,b) => b[1].total - a[1].total)\n  .map(([type, d]) => `\n  <tr>\n    <td style=\"padding:9px 12px;color:#e2e8f0;border-bottom:1px solid #334155;font-size:13px;\">${type}</td>\n    <td style=\"padding:9px 12px;text-align:center;border-bottom:1px solid #334155;\">\n      <span style=\"background:#ff4d4d33;color:#ff4d4d;padding:3px 10px;border-radius:20px;font-weight:bold;font-size:13px;\">${d.high}</span>\n    </td>\n    <td style=\"padding:9px 12px;text-align:center;border-bottom:1px solid #334155;\">\n      <span style=\"background:#f5a62333;color:#f5a623;padding:3px 10px;border-radius:20px;font-weight:bold;font-size:13px;\">${d.medium}</span>\n    </td>\n    <td style=\"padding:9px 12px;text-align:center;border-bottom:1px solid #334155;\">\n      <span style=\"background:#7ed32133;color:#7ed321;padding:3px 10px;border-radius:20px;font-weight:bold;font-size:13px;\">${d.low}</span>\n    </td>\n    <td style=\"padding:9px 12px;text-align:center;border-bottom:1px solid #334155;color:white;font-weight:bold;\">${d.total}</td>\n  </tr>`).join('');\n\n// ===== DEPT TABLE ROWS =====\nconst deptRows = Object.entries(deptMap)\n  .sort((a,b) => b[1].total - a[1].total)\n  .map(([dept, d]) => `\n  <tr>\n    <td style=\"padding:8px 10px;color:#e2e8f0;border-bottom:1px solid #334155;font-size:12px;\">${dept}</td>\n    <td style=\"padding:8px 10px;text-align:center;border-bottom:1px solid #334155;color:#00c6ff;font-weight:bold;\">${d.total}</td>\n    <td style=\"padding:8px 10px;text-align:center;border-bottom:1px solid #334155;color:#7ed321;font-weight:bold;\">${d.active}</td>\n    <td style=\"padding:8px 10px;text-align:center;border-bottom:1px solid #334155;color:#f5a623;font-weight:bold;\">${d.inProgress}</td>\n    <td style=\"padding:8px 10px;text-align:center;border-bottom:1px solid #334155;color:#06b6d4;font-weight:bold;\">${d.completed}</td>\n    <td style=\"padding:8px 10px;text-align:center;border-bottom:1px solid #334155;color:#ff4d4d;font-weight:bold;\">${d.grievance}</td>\n  </tr>`).join('');\n\n// ===== HTML EMAIL =====\nconst html = `\n<div style=\"font-family:'Segoe UI',sans-serif;background:#0f172a;padding:20px;color:white;max-width:650px;margin:0 auto;\">\n\n  <!-- HEADER -->\n  <div style=\"background:linear-gradient(135deg,#00c6ff,#7f00ff);padding:26px;border-radius:16px;margin-bottom:20px;\">\n    <h1 style=\"margin:0;font-size:21px;\">📊 PeopleOS HR Dashboard</h1>\n    <p style=\"margin:6px 0 0;opacity:0.85;font-size:13px;\">Daily Report • ${new Date().toDateString()}</p>\n  </div>\n\n  <!-- ========== SECTION 1: ONBOARDING ========== -->\n  <div style=\"background:#1e293b;padding:20px;border-radius:16px;margin-bottom:20px;border-left:4px solid #00c6ff;\">\n    <h2 style=\"margin:0 0 16px;font-size:16px;color:#00c6ff;\">👥 Onboarding Overview</h2>\n\n    <!-- KPI -->\n    <div style=\"display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;\">\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #00c6ff;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#00c6ff;\">${total}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">Total</div>\n      </div>\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #7ed321;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#7ed321;\">${active}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">✅ Active</div>\n      </div>\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #f5a623;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#f5a623;\">${inProgress}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">🚀 In Progress</div>\n      </div>\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #06b6d4;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#06b6d4;\">${completed}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">✔️ Completed</div>\n      </div>\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #a78bfa;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#a78bfa;\">${pending}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">⏳ Pending</div>\n      </div>\n    </div>\n\n    <!-- ONBOARDING BAR CHART -->\n    ${bar(active, '#7ed321', '✅ Active', maxOnboard)}\n    ${bar(inProgress, '#f5a623', '🚀 In Progress', maxOnboard)}\n    ${bar(completed, '#06b6d4', '✔️ Completed', maxOnboard)}\n    ${bar(pending, '#a78bfa', '⏳ Pending', maxOnboard)}\n\n    <!-- DISTRIBUTION -->\n    <div style=\"margin-top:16px;\">\n      <div style=\"display:flex;height:24px;border-radius:6px;overflow:hidden;gap:2px;\">\n        <div style=\"width:${pct(active,total)}%;background:#7ed321;\"></div>\n        <div style=\"width:${pct(inProgress,total)}%;background:#f5a623;\"></div>\n        <div style=\"width:${pct(completed,total)}%;background:#06b6d4;\"></div>\n        <div style=\"width:${pct(pending,total)}%;background:#a78bfa;\"></div>\n      </div>\n      <div style=\"display:flex;gap:12px;margin-top:8px;font-size:11px;color:#94a3b8;flex-wrap:wrap;\">\n        <span>🟢 Active ${pct(active,total)}%</span>\n        <span>🟡 In Progress ${pct(inProgress,total)}%</span>\n        <span>🔵 Completed ${pct(completed,total)}%</span>\n        <span>🟣 Pending ${pct(pending,total)}%</span>\n      </div>\n    </div>\n  </div>\n\n  <!-- ========== SECTION 2: GRIEVANCE ========== -->\n  <div style=\"background:#1e293b;padding:20px;border-radius:16px;margin-bottom:20px;border-left:4px solid #f5a623;\">\n    <h2 style=\"margin:0 0 16px;font-size:16px;color:#f5a623;\">⚠️ Grievance Overview</h2>\n\n    <!-- KPI -->\n    <div style=\"display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;\">\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #f5a623;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#f5a623;\">${grievanceYes}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">⚠️ Grievances</div>\n      </div>\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #7ed321;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#7ed321;\">${grievanceNo}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">✅ No Issue</div>\n      </div>\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #ff4d4d;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#ff4d4d;\">${openIssues}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">🔓 Open</div>\n      </div>\n      <div style=\"flex:1;min-width:80px;background:#0f172a;padding:14px 8px;border-radius:12px;text-align:center;border-top:3px solid #06b6d4;\">\n        <div style=\"font-size:24px;font-weight:bold;color:#06b6d4;\">${closedIssues}</div>\n        <div style=\"font-size:11px;color:#94a3b8;\">🔒 Closed</div>\n      </div>\n    </div>\n\n    <!-- GRIEVANCE BAR -->\n    ${bar(grievanceYes, '#f5a623', '⚠️ Has Grievance', maxGriev)}\n    ${bar(openIssues, '#ff4d4d', '🔓 Open Issues', maxGriev)}\n    ${bar(closedIssues, '#06b6d4', '🔒 Closed Issues', maxGriev)}\n\n    <!-- PRIORITY CARDS -->\n    <div style=\"display:flex;gap:12px;margin-top:18px;\">\n      <div style=\"flex:1;background:#ff4d4d22;border:1px solid #ff4d4d;padding:14px;border-radius:10px;text-align:center;\">\n        <div style=\"font-size:22px;font-weight:bold;color:#ff4d4d;\">${highP}</div>\n        <div style=\"font-size:12px;color:#94a3b8;margin-top:4px;\">🔴 High</div>\n      </div>\n      <div style=\"flex:1;background:#f5a62322;border:1px solid #f5a623;padding:14px;border-radius:10px;text-align:center;\">\n        <div style=\"font-size:22px;font-weight:bold;color:#f5a623;\">${mediumP}</div>\n        <div style=\"font-size:12px;color:#94a3b8;margin-top:4px;\">🟡 Medium</div>\n      </div>\n      <div style=\"flex:1;background:#7ed32122;border:1px solid #7ed321;padding:14px;border-radius:10px;text-align:center;\">\n        <div style=\"font-size:22px;font-weight:bold;color:#7ed321;\">${lowP}</div>\n        <div style=\"font-size:12px;color:#94a3b8;margin-top:4px;\">🟢 Low</div>\n      </div>\n    </div>\n\n    <!-- ISSUE TYPE TABLE -->\n    <h3 style=\"margin:20px 0 12px;font-size:14px;color:#e2e8f0;\">📋 Issue Type × Priority</h3>\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr style=\"background:#0f172a;\">\n        <th style=\"padding:9px 12px;text-align:left;font-size:11px;color:#64748b;text-transform:uppercase;\">Issue Type</th>\n        <th style=\"padding:9px 12px;text-align:center;font-size:11px;color:#ff4d4d;text-transform:uppercase;\">🔴 High</th>\n        <th style=\"padding:9px 12px;text-align:center;font-size:11px;color:#f5a623;text-transform:uppercase;\">🟡 Medium</th>\n        <th style=\"padding:9px 12px;text-align:center;font-size:11px;color:#7ed321;text-transform:uppercase;\">🟢 Low</th>\n        <th style=\"padding:9px 12px;text-align:center;font-size:11px;color:#94a3b8;text-transform:uppercase;\">Total</th>\n      </tr>\n      ${issueRows}\n    </table>\n  </div>\n\n  <!-- ========== SECTION 3: DEPARTMENT TABLE ========== -->\n  <div style=\"background:#1e293b;padding:20px;border-radius:16px;margin-bottom:20px;border-left:4px solid #a78bfa;\">\n    <h2 style=\"margin:0 0 16px;font-size:16px;color:#a78bfa;\">🏢 Department Breakdown</h2>\n    <table style=\"width:100%;border-collapse:collapse;\">\n      <tr style=\"background:#0f172a;\">\n        <th style=\"padding:9px 10px;text-align:left;font-size:11px;color:#64748b;text-transform:uppercase;\">Dept</th>\n        <th style=\"padding:9px 10px;text-align:center;font-size:11px;color:#00c6ff;text-transform:uppercase;\">Total</th>\n        <th style=\"padding:9px 10px;text-align:center;font-size:11px;color:#7ed321;text-transform:uppercase;\">Active</th>\n        <th style=\"padding:9px 10px;text-align:center;font-size:11px;color:#f5a623;text-transform:uppercase;\">Onboard</th>\n        <th style=\"padding:9px 10px;text-align:center;font-size:11px;color:#06b6d4;text-transform:uppercase;\">Done</th>\n        <th style=\"padding:9px 10px;text-align:center;font-size:11px;color:#ff4d4d;text-transform:uppercase;\">Grievance</th>\n      </tr>\n      ${deptRows}\n    </table>\n  </div>\n\n  <!-- CTA -->\n  <div style=\"text-align:center;margin-top:20px;\">\n    <a href=\"${dashboardLink}\"\n       style=\"background:linear-gradient(135deg,#00c6ff,#7f00ff);color:white;\n              padding:14px 35px;text-decoration:none;border-radius:10px;\n              font-weight:bold;font-size:15px;\">\n      📋 View Full Sheet\n    </a>\n  </div>\n\n  <p style=\"text-align:center;font-size:11px;color:#475569;margin-top:20px;\">\n    PeopleOS • Auto-generated by n8n • ${new Date().toLocaleString('en-IN')}\n  </p>\n</div>`;\n\nreturn [{ json: { htmlEmail: html } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        0
+      ],
+      "id": "588f2d4d-9a56-4bbf-aa58-55dd8c0ecffd",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cbcff683-acb2-47fe-84fe-fb38e704161d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b104bbf3051d053e031d850d957bf20f9facb334f7da8becd1d4fc7073e3e193"
+  },
+  "id": "R0SLMmL7mEpMu3ME",
+  "tags": []
+}

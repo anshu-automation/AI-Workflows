@@ -1,0 +1,403 @@
+{
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fe059973-d286-48f7-ba72-4f9beea95e9e",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "a83592a3-6e28-42ee-bab9-22666f684709",
+      "name": "Webhook",
+      "webhookId": "fe059973-d286-48f7-ba72-4f9beea95e9e"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Step 1: Get webhook body (array or single)\nconst input = $json.body;\n\n// Step 2: Ensure always array\nconst items = Array.isArray(input) ? input : [input];\n\n// Step 3: Process each record\nreturn items.map(data => {\n\n  // Safe mapping\n  const employeeName = data.employeeName || \"Employee\";\n  const employeeEmail = data.employeeEmail || \"\";\n  const employeeId = data.employeeId || \"\";\n  const department = data.department || \"\";\n  const manager = data.managerName || \"\";\n  const grievance = data.grievanceText || \"Not Provided\";\n\n  // Time\n  const now = new Date().toISOString();\n\n  // Unique ID\n  const submissionId = \"GRV-\" + Date.now() + \"-\" + Math.floor(Math.random()*1000);\n\n  // Category\n  let category = \"General\";\n  if (grievance.toLowerCase().includes(\"salary\")) category = \"Payroll\";\n  if (grievance.toLowerCase().includes(\"system\")) category = \"IT\";\n\n  // Assignment\n  let assignedTo = \"HR Team\";\n  let teamEmail = \"hr@company.co\";\n\n  if (category === \"Payroll\") {\n    assignedTo = \"Finance Team\";\n    teamEmail = \"finance@company.co\";\n  }\n\n  if (category === \"IT\") {\n    assignedTo = \"IT Team\";\n    teamEmail = \"it@company.co\";\n  }\n\n  // Priority + SLA\n  let priority = \"Medium\";\n  let slaHours = 48;\n\n  if (grievance.toLowerCase().includes(\"salary\")) {\n    priority = \"High\";\n    slaHours = 24;\n  }\n\n  // SLA Deadline\n  const slaDeadline = new Date(Date.now() + slaHours * 60 * 60 * 1000).toISOString();\n\n  // Tracking Link\n  const trackingLink = `https://peopleos.app/track/${submissionId}`;\n\n  // Email Draft\n  const draftResponse = `Hi ${employeeName},\n\nWe have successfully received your grievance.\n\nTracking ID: ${submissionId}\n\nPriority: ${priority}\nAssigned Team: ${assignedTo}\nSLA: ${slaHours} hours\n\nTrack here:\n${trackingLink}\n\nRegards,\nHR Team`;\n\n  // Final output\n  return {\n    json: {\n      \"Submission ID\": submissionId,\n      \"Employee Name\": employeeName,\n      \"Employee Email\": employeeEmail,\n      \"Employee ID\": employeeId,\n      \"Department\": department,\n      \"Manager Name\": manager,\n      \"Grievance Text\": grievance,\n      \"Submission Timestamp\": now,\n      \"Last Updated Time\": now,\n      \"Status\": \"Open\",\n      \"Owner\": \"HR\",\n      \"Assigned To\": assignedTo,\n      \"Team Email\": teamEmail,\n      \"Priority\": priority,\n      \"Category\": category,\n      \"SLA Deadline\": slaDeadline,\n      \"SLA Status\": \"Within SLA\",\n      \"Escalation Level\": \"None\",\n      \"Tracking Link\": trackingLink,\n      \"Resolution\": \"\",\n      \"Draft Response\": draftResponse,\n      \"isUpdate\": false\n    }\n  };\n\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "2622ab73-09ca-45bf-949f-06a991995a97",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1T6ad0VziA8e_FhNynxS44L0Tfgu0WmbHsgYc6LAn51U",
+          "mode": "list",
+          "cachedResultName": "Grievence Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T6ad0VziA8e_FhNynxS44L0Tfgu0WmbHsgYc6LAn51U/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Grievance Log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T6ad0VziA8e_FhNynxS44L0Tfgu0WmbHsgYc6LAn51U/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {
+            "Submission ID": "=GRV-{{$now}}",
+            "Grievance Text": "={{$json[\"Grievance Text\"]}}",
+            "Submission Timestamp": "={{$json[\"Submission Timestamp\"]}}",
+            "Last Updated Time": "=GRV-{{$now}}",
+            "Owner": "={{$json[\"Owner\"]}}",
+            "Team Email": "={{$json[\"Team Email\"]}}",
+            "Assigned To": "={{$json[\"Assigned To\"]}}",
+            "Priority": "={{$json[\"Priority\"]}}",
+            "SLA Status": "={{$json[\"SLA Status\"]}}",
+            "Category": "={{$json[\"Category\"]}}",
+            "SLA Deadline": "={{$json[\"SLA Deadline\"]}}",
+            "Escalation Level": "={{$json[\"Escalation Level\"]}}",
+            "Tracking Link": "={{$json[\"Tracking Link\"]}}",
+            "Resolution": "={{$json[\"Resolution\"]}}",
+            "Draft Response": "={{$json[\"Draft Response\"]}}",
+            "isUpdate": "={{$json[\"isUpdate\"]}}",
+            "Status": "={{$json[\"Status\"]}}",
+            "Employee Name": "={{$json[\"Employee Name\"]}}",
+            "Employee Email": "={{$json[\"Employee Email\"]}}",
+            "Manager Name": "={{$json[\"Manager Name\"]}}",
+            "Employee ID": "={{$json[\"Employee ID\"]}}",
+            "Department": "={{$json[\"Department\"]}}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Submission ID",
+              "displayName": "Submission ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Employee Name",
+              "displayName": "Employee Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Employee Email",
+              "displayName": "Employee Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Employee ID",
+              "displayName": "Employee ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Department",
+              "displayName": "Department",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Manager Name",
+              "displayName": "Manager Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Grievance Text",
+              "displayName": "Grievance Text",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submission Timestamp",
+              "displayName": "Submission Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Last Updated Time",
+              "displayName": "Last Updated Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Owner",
+              "displayName": "Owner",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Assigned To",
+              "displayName": "Assigned To",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Team Email",
+              "displayName": "Team Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Priority",
+              "displayName": "Priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SLA Deadline",
+              "displayName": "SLA Deadline",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "SLA Status",
+              "displayName": "SLA Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Escalation Level",
+              "displayName": "Escalation Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tracking Link",
+              "displayName": "Tracking Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resolution",
+              "displayName": "Resolution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Draft Response",
+              "displayName": "Draft Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "isUpdate",
+              "displayName": "isUpdate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        672,
+        0
+      ],
+      "id": "f86bb9c2-7727-491d-a761-6f6232a1f899",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "58Ml6XYsebkzpDFv",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$json[\"Employee Email\"]}}",
+        "subject": "=Grievance Received - {{$json[\"Submission ID\"]}}",
+        "message": "=Hi {{$json[\"Employee Name\"]}},\n\nWe have successfully received your grievance.\n\n🔹 Tracking ID: {{$json[\"Submission ID\"]}}  \n🔹 Track Status: {{$json[\"Tracking Link\"]}}\n\nOur team will review your request and get back to you shortly.\n\nIf you have any additional details, feel free to reply to this email.\n\nRegards,  \nHR Team",
+        "options": {
+          "ccList": "ashucent94@gmail.com"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "0b3bf80a-2e44-47d5-9742-45782bd6bdd8",
+      "name": "Send a message",
+      "webhookId": "39c90f87-6201-4de2-b92b-ec2fd89257e8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BqixGZL4Z9FwoVX3",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 50,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        448,
+        0
+      ],
+      "id": "ab4e56e3-d962-444f-9571-5ae97232c4e6",
+      "name": "Loop Over Items1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6109d9d9-64a0-4163-8a9f-c43b5c3c3aa9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b104bbf3051d053e031d850d957bf20f9facb334f7da8becd1d4fc7073e3e193"
+  },
+  "id": "9bx1Zsux6h4qChVQ",
+  "tags": []
+}
