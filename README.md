@@ -1,69 +1,42 @@
 # PeopleOS — HR Automation System
 
-Automates routing, SLA tracking, and reporting.
-
-<p align="left">
-  <img src="https://img.shields.io/badge/Automation-n8n%20%7C%20Zapier-blue" />
-  <img src="https://img.shields.io/badge/AI-Groq-green" />
-  <img src="https://img.shields.io/badge/Data-Google%20Sheets-lightgrey" />
-  <img src="https://img.shields.io/badge/Status-Working-success" />
-</p>
+Automates grievance routing, SLA tracking, and HR reporting.
 
 ---
 
-## Demo
+## 📊 Dashboard
 
-> Add your demo GIF at `./images/demo.gif`
-
-![demo](./images/demo.gif)
-
----
-
-## Flow
-
-```mermaid
-flowchart LR
-A[Form] --> B[Workflow]
-B --> C[Classify]
-C --> D[Route]
-D --> E[Email]
-E --> F[SLA]
-F --> G[Dashboard]
-``` id="merm1"
+![Department Dashboard](Dashboard/Department-Dashboard-png.jpeg)  
+![Grievance Dashboard](Dashboard/Grievance Dashboard png.jpeg)  
+![Onboarding Dashboard](Dashboard/Onboarding-dashboard-png.jpeg)
 
 ---
 
-## What it does
+## ⚙️ Grievance Automation
 
-- Routes each request automatically  
-- Starts SLA at submission  
-- Sends confirmation instantly  
-- Logs everything for tracking  
-
----
-
-## Modules
-
-- Grievance routing  
-- HR policy bot  
-- Reporting pipeline  
-- Dashboard tracking  
+![Form](grievance/Grievance -zapier-form.png.jpeg)  
+![Email](grievance/Grievance N8N email.png.jpeg)  
+![Confirmation](grievance/Grievance loveable confirmation.png.jpeg)
 
 ---
 
-## Impact
+## 🤖 HR Policy Bot
 
-- 12 min → < 1 sec  
-- 340+ cases tracked  
-- No manual routing  
-- Reduced SLA delays  
+![Inbox](hr policy bot/Policy bot inbox.png.jpeg)  
+![Workflow](hr policy bot/Policy bot workflow.png.jpeg)  
+![Response](hr policy bot/Policybot response email.png.jpeg)
 
 ---
 
-## Stack
+## ⚡ What it does
+
+- Routes employee queries automatically  
+- Tracks SLA without manual follow-up  
+- Sends real-time notifications  
+- Removes repetitive HR work  
+
+---
+
+## 🧠 Stack
 
 n8n · Zapier · Groq AI · Google Sheets · Gmail
-
----
-
-## Structure
